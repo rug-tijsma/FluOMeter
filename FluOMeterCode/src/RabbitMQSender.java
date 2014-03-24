@@ -7,7 +7,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQSender {
 	
-	private final static String QUEUE_NAME = "task_queue";
+	private final static String QUEUE_NAME = "queue";
 	private static final String HOST = "localhost";
 	
 	public RabbitMQSender(String message) {
