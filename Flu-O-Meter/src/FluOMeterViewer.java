@@ -1,9 +1,15 @@
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Desktop;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,76 +20,33 @@ import javax.swing.JRadioButton;
 
 public class FluOMeterViewer extends JFrame implements ActionListener {
 
-	private static final long serialVersionUID = 8453164331402975408L;
 	private static final String INFLUENZA_A = "Influenza A";
 	private static final String INFLUENZA_B = "Influenza B";
 	private static final String INFLUENZA_C = "Influenza C";
 	private static final String INFLUENZA_ALL = "All types of influenza";
 	private static final String ADD_FLU = "Add flu";
-	private static final String MANUAL = "Manual";
-	private static final String NORTH = "North";
-	private static final String WEST = "West";
-	private static final String EAST = "East";
-	private static final String SOUTH = "South";
+	private static final String REDRAW = "Redraw map";
+	private static final String HELP = "Help";
 	private static final String URL_STRING = "http://localhost:8080/Flu-O-Meter/FluOMeterServlet";
 
+	private ButtonGroup button_group;
 	private JRadioButton influenza_a, influenza_b, influenza_c, influenza_all;
-	private JButton add_flu, manual, north, west, east, south;
+	private JButton add_flu, redraw, manual;
 
 	public FluOMeterViewer() {
 		JPanel main_panel = new JPanel(new BorderLayout());
-		
-		JPanel west_panel = new JPanel();
-		west_panel.setPreferredSize(new Dimension(1300, 900));
-		west_panel.add(new JLabel("HI"));
 
-		JPanel east_panel = new JPanel(new GridLayout(4, 1));
-		east_panel.setPreferredSize(new Dimension(300, 900));
-
-		JPanel navigation_panel = new JPanel(new BorderLayout());
-		JPanel navigation_panel_buttons = new JPanel(new GridLayout(3, 3));
-		navigation_panel_buttons.add(new JLabel(""));
-		north = new JButton(NORTH);
-		north.addActionListener(this);
-		north.setActionCommand(NORTH);
-		navigation_panel_buttons.add(north);
-		navigation_panel_buttons.add(new JLabel(""));
-		west = new JButton(WEST);
-		west.addActionListener(this);
-		west.setActionCommand(WEST);
-		navigation_panel_buttons.add(west);
-		navigation_panel_buttons.add(new JLabel(""));
-		east = new JButton(EAST);
-		east.addActionListener(this);
-		east.setActionCommand(EAST);
-		navigation_panel_buttons.add(east);
-		navigation_panel_buttons.add(new JLabel(""));
-		south = new JButton(SOUTH);
-		south.addActionListener(this);
-		south.setActionCommand(SOUTH);
-		navigation_panel_buttons.add(south);
-		navigation_panel_buttons.add(new JLabel(""));
-		
-		navigation_panel.add(new JLabel("Navigation"), BorderLayout.NORTH);
-		navigation_panel.add(navigation_panel_buttons, BorderLayout.CENTER);
-		east_panel.add(navigation_panel);
-		
-		east_panel.add(new JPanel());
-		JPanel east_sub_panel = new JPanel(new BorderLayout());
-		JPanel influenza_panel = new JPanel();
-		ButtonGroup button_group = new ButtonGroup();
+		JPanel center_panel = new JPanel(new BorderLayout());
+		JPanel influenza_panel = new JPanel(new GridLayout(2, 2));
+		button_group = new ButtonGroup();
 		influenza_a = new JRadioButton(INFLUENZA_A);
 		influenza_a.addActionListener(this);
-		influenza_a.setActionCommand(INFLUENZA_A);
 		influenza_b = new JRadioButton(INFLUENZA_B);
 		influenza_b.addActionListener(this);
-		influenza_b.setActionCommand(INFLUENZA_B);
 		influenza_c = new JRadioButton(INFLUENZA_C);
 		influenza_c.addActionListener(this);
-		influenza_c.setActionCommand(INFLUENZA_C);
 		influenza_all = new JRadioButton(INFLUENZA_ALL);
 		influenza_all.addActionListener(this);
-		influenza_all.setActionCommand(INFLUENZA_ALL);
 		influenza_all.setSelected(true);
 		button_group.add(influenza_a);
 		button_group.add(influenza_b);
@@ -93,29 +56,33 @@ public class FluOMeterViewer extends JFrame implements ActionListener {
 		influenza_panel.add(influenza_b);
 		influenza_panel.add(influenza_c);
 		influenza_panel.add(influenza_all);
-		east_sub_panel.add(new JLabel("Select visible type(s) of influenza"),
+		center_panel.add(influenza_panel, BorderLayout.CENTER);
+		center_panel.add(new JLabel("Select visible type(s) of influenza"),
 				BorderLayout.NORTH);
-		east_sub_panel.add(influenza_panel, BorderLayout.CENTER);
 
-		JPanel button_panel = new JPanel(new GridLayout(2, 1));
+		JPanel south_panel = new JPanel(new FlowLayout());
 		add_flu = new JButton("Register new flu patient");
 		add_flu.addActionListener(this);
 		add_flu.setActionCommand(ADD_FLU);
-		manual = new JButton(MANUAL);
+		redraw = new JButton(REDRAW);
+		redraw.addActionListener(this);
+		redraw.setActionCommand(REDRAW);
+		manual = new JButton(HELP);
 		manual.addActionListener(this);
-		manual.setActionCommand(MANUAL);
-		button_panel.add(add_flu);
-		button_panel.add(manual);
+		manual.setActionCommand(HELP);
+		south_panel.add(add_flu);
+		south_panel.add(redraw);
+		south_panel.add(manual);
 
-		east_panel.add(east_sub_panel);
-		east_panel.add(button_panel);
-		main_panel.add(east_panel, BorderLayout.EAST);
-		main_panel.add(west_panel, BorderLayout.CENTER);
+		main_panel.add(new JLabel(""), BorderLayout.WEST);
+		main_panel.add(new JLabel(""), BorderLayout.EAST);
+		main_panel.add(center_panel, BorderLayout.CENTER);
+		main_panel.add(south_panel, BorderLayout.SOUTH);
 
 		this.getContentPane().add(main_panel);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("FluOMeter - by Thom Carretero Seinhorst and Ynte Tijsma");
-		this.setSize(1600, 900);
+		this.setTitle("FluOMeter");
+		this.setSize(500, 300);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setVisible(true);
@@ -125,26 +92,19 @@ public class FluOMeterViewer extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String action_command = e.getActionCommand();
 
-		if (INFLUENZA_A.equals(action_command)) {
-			System.out.println("Showing: " + INFLUENZA_A);
-		} else if (INFLUENZA_B.equals(action_command)) {
-			System.out.println("Showing: " + INFLUENZA_B);
-		} else if (INFLUENZA_C.equals(action_command)) {
-			System.out.println("Showing: " + INFLUENZA_C);
-		} else if (INFLUENZA_ALL.equals(action_command)) {
-			System.out.println("Showing: " + INFLUENZA_ALL);
-		} else if (ADD_FLU.equals(action_command)) {
+		if (ADD_FLU.equals(action_command)) {
 			addFlu();
-		} else if (MANUAL.equals(action_command)) {
+		} else if (REDRAW.equals(action_command)) {
+			if (Desktop.isDesktopSupported()) {
+				Desktop desktop = Desktop.getDesktop();
+				try {
+					desktop.browse(new URI(URL_STRING));
+				} catch (IOException | URISyntaxException ex) {
+					ex.printStackTrace();
+				}
+			}
+		} else {
 			showManual();
-		} else if (NORTH.equals(action_command)) {
-			System.out.println("Moving north");
-		} else if (WEST.equals(action_command)) {
-			System.out.println("Moving west");
-		} else if (EAST.equals(action_command)) {
-			System.out.println("Moving east");
-		} else if (SOUTH.equals(action_command)) {
-			System.out.println("Moving south");
 		}
 	}
 
@@ -162,13 +122,21 @@ public class FluOMeterViewer extends JFrame implements ActionListener {
 				new RabbitMQSender(location + "," + flu);
 		}
 	}
-	
+
 	private void showManual() {
-		JOptionPane.showMessageDialog(this, "All the manuals", "Manual", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(this, "All the manuals", "Manual",
+				JOptionPane.PLAIN_MESSAGE);
 	}
 
-	public static void main(String[] args) {
-		new FluOMeterViewer();
+	public String getSelectedFlu() {
+		for (Enumeration<AbstractButton> buttons = button_group.getElements(); buttons
+				.hasMoreElements();) {
+			AbstractButton button = buttons.nextElement();
+
+			if (button.isSelected())
+				return button.getText();
+		}
+		return null;
 	}
 
 }
