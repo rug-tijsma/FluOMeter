@@ -1,0 +1,17 @@
+	stmt = conn.createStatement();
+	ResultSet results = stmt.executeQuery("select * from flu where city ='" + tableName + "'");
+	ResultSetMetaData rsmd = results.getMetaData();
+	int numberCols = rsmd.getColumnCount();
+	
+	if(numberCols == 0)
+	{
+		String sql = "INSERT INTO flu VALUES ('" + city + "','" + type + "', 1)";
+		stmt.executeUpdate(sql);
+	}
+	else
+	{
+		String updateTableSQL = "UPDATE flu"
+				+ " SET total = " + (numberCols + 1) + "
+				+ " WHERE city = '" + city + "'";
+		stmt.executeUpdate(sql);
+	}
