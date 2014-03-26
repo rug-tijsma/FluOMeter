@@ -1,0 +1,28 @@
+	public void getRecord() {   
+		String query = "SELECT * From flu"; //fetch whole record
+        try {
+            stmt = con.createStatement();
+			ResulstSet rs = stmt.executeQuery(query); 
+
+			while (rs.next()) {
+				Flu flu = new Flu(rs.getString("city"), rs.getString("type"), rs.getInt("total"));               
+            }
+            stmt.close();
+            con.close(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+--------------------------------------------------------------------------------------------------
+public class Flu{
+
+private String city;
+private String type;
+private int total;
+
+    public Player(String city, String type, int total) {
+        this.city= city;
+        this.type= type;
+        this.total= total;
+    }
+}
