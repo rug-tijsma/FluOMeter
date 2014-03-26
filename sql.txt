@@ -1,0 +1,8 @@
+create table flu(city varchar(50), type varchar(1), total integer);
+insert into flu values ('Groningen,Delfzijl','A',30);
+insert into flu values ('Groningen,Delfzijl','B',50);
+insert into flu values ('Groningen,Delfzijl','C',70);
+insert into flu values ('Amsterdam','A',1000);
+insert into flu values ('Rotterdam','B',3252);
+insert into flu values ('Eindhoven','B',155);
+insert into flu values ('Almere','C',1251);
